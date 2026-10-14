@@ -1,0 +1,37 @@
+name: scan
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  sast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker run -v ${{github.workspace}}:/repo semgrep/semgrep semgrep --config=auto --error --sarif -o /repo/semgrep.sarif /repo
+      - uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: semgrep.sarif
+  
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: docker run -v ${{github.workspace}}:/repo zricethezav/gitleaks:latest detect --source /repo -f sarif -r /repo/gitleaks.sarif
+      - uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: gitleaks.sarif
+
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker run -v ${{github.workspace}}:/repo aquasec/trivy:latest fs --scanners vuln --exit-code 1 --severity HIGH,CRITICAL --format sarif -o /repo/trivy.sarif /repo
+      - uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy.sarif
