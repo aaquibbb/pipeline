@@ -1,4 +1,4 @@
-SLACK_TOKEN = xoxb-0000000000-0000000000-aaaaaaaaaaaaaaaaaaaaaaaa
+SLACK_TOKEN = "xoxb-2847193056-4television91827364-Kj9mQx2vL8pR4nT6wZ3bY7cF"
 import sqlite3
 from flask import Flask, request
 
