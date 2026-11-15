@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, request, render_template_string
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
@@ -9,7 +9,7 @@ def get_user():
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
-    return render_template_string("<h1>User: {{ uid }}</h1>", uid=user_id)
+    return jsonify({"user": user_id})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
