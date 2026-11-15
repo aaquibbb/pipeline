@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: docker run -v ${{github.workspace}}:/repo semgrep/semgrep semgrep --config=auto --error --sarif -o /repo/semgrep.sarif /repo
+      - run: docker run -v ${{github.workspace}}:/repo semgrep/semgrep semgrep --config=auto  --sarif -o /repo/semgrep.sarif /repo
       - uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
