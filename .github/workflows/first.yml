@@ -30,8 +30,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: docker run -v ${{github.workspace}}:/repo aquasec/trivy:latest fs --scanners vuln --exit-code 1 --severity HIGH,CRITICAL --format sarif -o /repo/trivy.sarif /repo
+      - run: docker run -v ${{github.workspace}}:/repo aquasec/trivy:latest fs --scanners vuln --format sarif -o /repo/trivy.sarif /repo
       - uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
           sarif_file: trivy.sarif
+      - run: docker run -v ${{github.workspace}}:/repo openpolicyagent/opa:latest eval -i /repo/trivy.sarif -d /repo/policy.rego --fail-defined 'data.security.deny[_]'
